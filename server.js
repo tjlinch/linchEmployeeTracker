@@ -71,7 +71,7 @@ function viewAllDepartments() {
 }
 
 function viewAllRoles() {
-    connection.query('SELECT * FROM role',
+    connection.query('SELECT role.id, role.title, role.salary, department.name AS department FROM role, department WHERE department.id = role.department_id',
     function(err, res) {
         if (err) throw err;
         console.table(res);
@@ -80,10 +80,59 @@ function viewAllRoles() {
 }
 
 function viewAllEmployees() {
-    connection.query('SELECT * FROM employee',
+    connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id FROM employee, role, department WHERE role.id = employee.role_id AND department.id = role.department_id;',
+    // role.title AS role, role.salary as salary,
+    // INNER JOIN role ON employee.role_id = role.title
     function(err, res) {
         if (err) throw err;
         console.table(res);
         promptUser();
+    })
+}
+
+function addADepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Name the new department', 
+            name: 'newDepartment'
+        }
+    ]).then(function (input) {
+        connection.query(`INSERT INTO department(name) VALUES ('${input.newDepartment}')`,
+            function(err, res) {
+                if (err) throw err;
+                console.table(res);
+                viewAllDepartments();
+                promptUser();
+            }
+        )
+    })
+}
+
+function addARole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Name the new role', 
+            name: 'newRoleTitle'
+        },
+        {
+            type: 'input',
+            message: 'What is this roles salary?',
+            name: 'newRoleSalary'
+        },
+        {
+            type: ''
+        }
+
+    ]).then(function (input) {
+        connection.query(`INSERT INTO role(title, salary) VALUES ('${input.newRoleTitle}', ${input.newRoleSalary})`,
+            function(err, res) {
+                if (err) throw err;
+                console.table(res);
+                viewAllRoles();
+                promptUser();
+            }
+        )
     })
 }
