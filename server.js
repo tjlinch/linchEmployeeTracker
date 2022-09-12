@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 const connection = require('./config/connection');
 
+//Connect to mysql through connection.js and open app if successful
 connection.connect((err) => {
     if (err) throw err;
     console.log('||==============================||');
@@ -13,6 +14,7 @@ connection.connect((err) => {
     promptUser();
 });
 
+//Opening prompts
 const promptUser = () => {
     inquirer.prompt([
         {
@@ -61,6 +63,7 @@ const promptUser = () => {
     })
 }
 
+//Functions to perform each of the above case operations
 function viewAllDepartments() {
     connection.query('SELECT * FROM department',
     function(err, res) {
