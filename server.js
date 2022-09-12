@@ -81,9 +81,9 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
     connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id FROM employee, role, department WHERE role.id = employee.role_id AND department.id = role.department_id;',
-    
+   
     //============================================//
-    //TODO: add link to manager name instead of id
+    //TODO: add connection to manager name instead of id
     //============================================//
 
     function(err, res) {
@@ -129,7 +129,7 @@ function addARole() {
             name: 'newRoleDepartment'
         }
         //==========================================//
-        //TODO: switch input from id to just enter the department name
+        //TODO: switch input from id to select the department name
         //=========================================//
         
         // {
@@ -183,5 +183,47 @@ function addAnEmployee() {
                 promptUser();
             }
         )
+    })
+}
+
+function updateEmployeeRole() {
+    connection.query('SELECT employee.first_name, employee.last_name FROM employee', function(err, res) {
+        if (err) throw err;
+        // console.log(res)
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which employee would you like to update?',
+                name: 'updateEmployee',
+                choices: function() {
+                    const names = [];
+                    
+                    for (i = 0; i < res.length; i++) {
+                        names.push(`${res[i].first_name} ${res[i].last_name}`);
+                    }
+                    return names;
+                }
+            },
+            {
+                type: 'list',
+                message: 'What is the employees new job title?',
+                name: 'updateEmployeeRole',
+                choices: ['Accountant', 'CEO', 'CFO', 'Customer Service Rep.', 'Director of Marketing', 'Engineer', 'Lawyer', 'Sales Manager', 'Salesperson', 'Senior Engineer']
+                // function() {
+                //     const roles = [];
+                //     connection.query('SELECT role.title FROM role', function(err, res) {
+                //         if (err) throw err;
+                //         // console.log(res);
+                //         for (i = 0; i < res.length; i++) {
+                //             roles.push(res[i].title);
+                //         }
+                //     })
+                // return roles;
+                // }
+            }
+        ]).then(function(input) {
+            console.log(input);
+            promptUser();
+        })
     })
 }
